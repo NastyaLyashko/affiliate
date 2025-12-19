@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply bg-white text-slate-900; }
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+}

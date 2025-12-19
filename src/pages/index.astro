@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../shared/layouts/BaseLayout.astro';
+import { getAllPosts } from '../lib/posts';
+import ArticleCard from '../widgets/ArticleCard/ArticleCard.astro';
+import TagList from '../widgets/TagList/TagList.astro';
+import Pagination from '../widgets/Pagination/Pagination.astro';
+
+const posts = await getAllPosts();
+const allTags = Array.from(new Set(posts.flatMap(p => p.tags))).sort();
+
+const url = new URL(Astro.request.url);
+const page = parseInt(url.searchParams.get('page') || '1', 10);
+const perPage = 4;
+const totalPages = Math.max(1, Math.ceil(posts.length / perPage));
+const start = (page - 1) * perPage;
+const visiblePosts = posts.slice(start, start + perPage);
+---
+<BaseLayout title="Главная — My Affiliate">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="lg:col-span-3">
+      <div class="grid gap-4">
+        {visiblePosts.map(post => <ArticleCard post={post} />)}
+      </div>
+      {posts.length > perPage && <Pagination page={page} totalPages={totalPages} baseUrl="/" />}
+    </div>
+
+    <aside class="lg:col-span-1">
+      <TagList tags={allTags} onTagHref={(t) => `/tag/${encodeURIComponent(t)}`} />
+    </aside>
+  </div>
+</BaseLayout>

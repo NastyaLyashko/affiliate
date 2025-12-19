@@ -1,0 +1,15 @@
+---
+const { tags = [], onTagHref = (t) => `/tag/${encodeURIComponent(t)}` } = Astro.props;
+---
+{tags && tags.length > 0 ? (
+  <div class="p-4 border rounded">
+    <h4 class="font-semibold mb-2">Разделы</h4>
+    <ul class="flex flex-col gap-2">
+      {tags?.map(tag => (
+        <li>
+          <a class="text-sm hover:underline" href={onTagHref(tag)}>{tag}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+) : null}

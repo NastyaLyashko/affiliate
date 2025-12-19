@@ -1,0 +1,57 @@
+---
+const { post } = Astro.props;
+
+function isEmpty(v) {
+  return !v || (typeof v === "string" && v.trim() === "");
+}
+
+if (!post || isEmpty(post.title) || isEmpty(post.url)) {
+  return null;
+}
+
+const formattedDate = post.date ? new Date(post.date).toLocaleDateString() : '';
+---
+<article class="border rounded-lg p-4 hover:shadow transition">
+  <div class="flex items-start gap-3">
+    <!-- Иконка: делаем кликабельной отдельно -->
+    {post.icon ? (
+      <a href={post.url} class="text-3xl flex-none" aria-hidden="true">{post.icon}</a>
+    ) : null}
+
+    <div class="flex-1">
+      <!-- Превью (если есть) -->
+      {post.cover ? (
+        <figure class="mb-3">
+          <a href={post.url}>
+            <img src={post.cover} alt={post.title} class="w-full h-auto rounded-md object-cover" loading="lazy" />
+          </a>
+        </figure>
+      ) : null}
+
+      <!-- Заголовок как ссылка -->
+      <h3 class="text-lg font-semibold">
+        <a href={post.url} class="hover:underline">{post.title}</a>
+      </h3>
+
+      {formattedDate && (
+        <div class="text-xs text-slate-500 mt-1">
+          <span>{formattedDate}</span>
+        </div>
+      )}
+
+      <!-- Теги — отдельные ссылки (уже не вложены в внешнюю ссылку) -->
+      {Array.isArray(post.tags) && post.tags.length > 0 && (
+        <div class="mt-2 flex flex-wrap gap-2">
+          {post.tags.map((tag) => (
+            <a
+              class="text-xs px-2 py-1 bg-slate-100 rounded text-slate-700"
+              href={`/tag/${encodeURIComponent(tag)}`}
+            >
+              {tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</article>

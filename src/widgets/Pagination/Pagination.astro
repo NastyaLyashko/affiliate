@@ -1,0 +1,10 @@
+---
+const { page = 1, totalPages = 1, baseUrl = '/' } = Astro.props;
+let prev = page > 1 ? page - 1 : null;
+let next = page < totalPages ? page + 1 : null;
+---
+<nav class="flex items-center justify-center gap-4 mt-6">
+  {prev ? <a href={`${baseUrl}?page=${prev}`} class="px-3 py-1 border rounded">← Prev</a> : <span class="px-3 py-1 text-slate-400">← Prev</span>}
+  <span>Page {page} / {totalPages}</span>
+  {next ? <a href={`${baseUrl}?page=${next}`} class="px-3 py-1 border rounded">Next →</a> : <span class="px-3 py-1 text-slate-400">Next →</span>}
+</nav>

@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../shared/layouts/BaseLayout.astro';
+import { getAllPosts, getPostBySlug } from '../../lib/posts';
+import TagList from '../../widgets/TagList/TagList.astro';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map(post => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const { front, Content } = await getPostBySlug(slug ?? '');
+const posts = await getAllPosts();
+
+const other = posts.filter(p => p.slug !== slug).slice(0, 10);
+---
+<BaseLayout title={front.title}>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <article class="lg:col-span-3 prose max-w-none">
+      <h1>{front.title}</h1>
+      <p class="text-sm text-slate-500">
+        {new Date(front.date).toLocaleDateString()}
+      </p>
+
+      <div class="mt-6">
+        <Content />
+      </div>
+
+      <div class="mt-10">
+        <h3 class="font-semibold mb-3">Другие статьи</h3>
+        <div class="flex gap-3 overflow-x-auto py-2">
+          {other.map(p => (
+            <a href={p.url} class="min-w-[220px] p-3 border rounded hover:shadow">
+              <div class="text-xl">{p.icon}</div>
+              <div class="font-semibold">{p.title}</div>
+              <div class="text-xs text-slate-500 mt-2">
+                {new Date(p.date).toLocaleDateString()}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </article>
+
+    <aside class="lg:col-span-1">
+      <TagList tags={Array.from(new Set(posts.flatMap(p => p.tags))).sort()} />
+    </aside>
+  </div>
+</BaseLayout>

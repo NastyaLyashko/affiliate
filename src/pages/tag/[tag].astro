@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../shared/layouts/BaseLayout.astro';
+import { getAllPosts } from '../../lib/posts';
+import ArticleCard from '../../widgets/ArticleCard/ArticleCard.astro';
+import TagList from '../../widgets/TagList/TagList.astro';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  const tags = Array.from(new Set(posts.flatMap(p => p.tags)));
+
+  return tags.map(t => ({
+    params: { tag: t },
+  }));
+}
+
+const { tag } = Astro.params;
+
+const posts = await getAllPosts();
+const filtered = posts.filter(p => p.tags.includes(tag));
+const allTags = Array.from(new Set(posts.flatMap(p => p.tags))).sort();
+---
+<BaseLayout title={`Тег: ${tag}`}>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="lg:col-span-3">
+      <h2 class="text-2xl font-bold mb-4">
+        Тег: {tag} — {filtered.length}
+      </h2>
+
+      <div class="grid gap-4">
+        {filtered.map(post => <ArticleCard post={post} />)}
+      </div>
+    </div>
+
+    <aside class="lg:col-span-1">
+      <TagList tags={allTags} />
+    </aside>
+  </div>
+</BaseLayout>

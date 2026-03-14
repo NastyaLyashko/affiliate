@@ -2,11 +2,12 @@ import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://nastyalyashko.github.io/affiliate',
+  base: '/affiliate',
+  output: 'static',
   markdown: {
     syntaxHighlight: 'shiki'
   },
-  output: 'server',
   integrations: [
     tailwind({
       applyBaseStyles: true,
